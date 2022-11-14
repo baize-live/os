@@ -162,6 +162,7 @@ default_free_pages(struct Page *base, size_t n) {
     while (le != &free_list) {
         p = le2page(le, page_link);
         le = list_next(le);
+        // 合并两个连着的块
         if (base + base->property == p) {
             base->property += p->property;
             ClearPageProperty(p);
@@ -175,7 +176,7 @@ default_free_pages(struct Page *base, size_t n) {
         }
     }
     nr_free += n;
-    list_add(&free_list, &(base->page_link));
+    list_add_before(&free_list, &(base->page_link));
 }
 
 static size_t
